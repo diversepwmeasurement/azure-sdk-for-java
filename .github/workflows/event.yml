@@ -1,25 +1,18 @@
-# NOTE: currently azure-sdk-actions only hosts check enforcer code.
-# If further functionality is added, this name should be updated to reflect
-# the more generic behavior
-name: Check Enforcer
-
-on:
-  check_suite:
-    types: [completed]
-  issue_comment:
-    types: [created]
-
-permissions: {}
-
 jobs:
   event-handler:
-    permissions:
-      statuses: write # to set status (azure/azure-sdk-actions)
-      pull-requests: write # to read pull requests and write comments (azure/azure-sdk-actions)
-      checks: read # to read check status (azure/azure-sdk-actions)
     name: Handle ${{ github.event_name }} ${{ github.event.action }} event
-    runs-on: ubuntu-latest
+    permissions:
+      checks: read
+      pull-requests: write
+      statuses: write
+    runs-on: self-hosted
     steps:
-      - uses: azure/azure-sdk-actions@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - continue-on-error: true
+      uses: azure/azure-sdk-actions@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+name: Check Enforcer
+on:
+  repository_dispatch:
+    types: trigger-ga___event.yml
+permissions: {}
